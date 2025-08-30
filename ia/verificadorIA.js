@@ -1,9 +1,9 @@
-// ia/verificadorIA.js
 const axios = require('axios');
+require('dotenv').config(); // Cargar variables desde .env
 
-const GROQ_API_KEY = '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'; 
+const GROQ_API_KEY = process.env.GROQ_API_KEY;
 const GROQ_API_URL = 'https://api.groq.com/openai/v1/chat/completions';
-const MODEL = 'llama3-70b-8192'; 
+const MODEL = 'llama3-70b-8192';
 
 async function verificarConIA(texto) {
   try {
