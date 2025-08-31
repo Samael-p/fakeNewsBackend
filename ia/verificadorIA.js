@@ -14,13 +14,32 @@ if (!GROQ_API_KEY) {
 async function verificarConIA(texto) {
   try {
     const prompt = `
-Eres un verificador de hechos boliviano. Evalúa la siguiente noticia o declaración y responde SOLO con este JSON (sin ninguna explicación externa ni texto adicional):
+Eres un verificador de hechos boliviano especializado en detectar noticias falsas. 
+Tu tarea es evaluar cuidadosamente el texto proporcionado y responder SOLO con un JSON válido y completo, sin explicaciones externas ni texto adicional. 
 
+Debes analizar la información basándote en: 
+- Consistencia lógica (si el hecho es posible o altamente improbable).
+- Disponibilidad de fuentes confiables (medios oficiales, periódicos reconocidos, comunicados de instituciones públicas, organismos internacionales).
+- Lenguaje utilizado (si contiene frases sensacionalistas, conspirativas o exageradas).
+- Contexto boliviano y latinoamericano (considera la realidad política, económica y social actual).
+- Contraste con eventos recientes y verificables.
+
+REGLAS DEL VEREDICTO:
+- Usa "Posiblemente Verdadera" si hay coincidencias sólidas en fuentes confiables.
+- Usa "Posiblemente Falsa" si se contradice con fuentes confiables o presenta rasgos típicos de noticias falsas.
+- Usa "No concluyente" si no hay suficiente evidencia para determinar su veracidad.
+
+SCORE (0–100):
+- 0–30 → Muy probablemente falso.
+- 31–69 → Incierto o no concluyente.
+- 70–100 → Altamente probable que sea verdadero.
+
+FORMATO DE SALIDA ÚNICO (JSON estricto):
 {
   "veredicto": "Posiblemente Verdadera" | "Posiblemente Falsa" | "No concluyente",
   "score": número entre 0 y 100,
-  "razonamiento": explicación breve en español,
-  "fuenteCoincidente": url si la conoces o null
+  "razonamiento": "explicación breve y objetiva en español",
+  "fuenteCoincidente": "url confiable o null si no hay"
 }
 
 Texto a evaluar:
