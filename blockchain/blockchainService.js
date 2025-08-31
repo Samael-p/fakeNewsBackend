@@ -7,6 +7,8 @@ class BlockchainService {
     this.signer = null;
     this.contract = null;
     this.isConnected = false;
+    // NUEVO: guardar todas las verificaciones en memoria
+    this.verificaciones = [];
   }
 
   // Conectar a la blockchain
@@ -78,13 +80,17 @@ class BlockchainService {
       const receipt = await transaction.wait();
       console.log(`Transacción confirmada en bloque: ${receipt.blockNumber}`);
 
-      return {
+      const resultadoBlockchain =  {
         success: true,
         transactionHash: transaction.hash,
         blockNumber: receipt.blockNumber,
         verificacionHash: verificacionHash,
         datos: datos
       };
+      // NUEVO: guardar en memoria para usar en componentes
+      this.verificaciones.push({ ...datos,});
+
+      return resultadoBlockchain;
 
     } catch (error) {
       console.error('Error subiendo a blockchain:', error.message);
@@ -93,6 +99,15 @@ class BlockchainService {
         error: error.message
       };
     }
+  }
+   // NUEVO: obtener la última verificación
+  obtenerUltimaVerificacion() {
+    return this.verificaciones[this.verificaciones.length - 1] || null;
+  }
+
+  // NUEVO: obtener todas las verificaciones
+  obtenerTodasVerificaciones() {
+    return this.verificaciones;
   }
 
   // Crear datos de transacción (simplificado)

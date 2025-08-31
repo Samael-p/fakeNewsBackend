@@ -5,9 +5,11 @@ const app = express();
 const verificarConIA = require('./ia/verificadorIA');
 const extraerTextoDeLink = require('./utils/extraerTextoDeLink');
 const BlockchainService = require('./blockchain/blockchainServiceSimple');
+const { ethers } = require('ethers');
 
 app.use(cors());
 app.use(express.json());
+const blockchainService = new BlockchainService();
 
 app.post('/verificar', async (req, res) => {
   console.log('Body recibido:', req.body); 
@@ -28,7 +30,7 @@ app.post('/verificar', async (req, res) => {
       console.log(`Score alto (${resultado.score}% >= ${umbral}%), subiendo a blockchain...`);
       
       try {
-        const blockchainService = new BlockchainService();
+       
         const resultadoBlockchain = await blockchainService.subirVerificacion(contenido, resultado);
         
         return res.json({
@@ -151,4 +153,26 @@ app.get('/estadisticas', (req, res) => {
 
 app.listen(3000, () => {
   console.log('Servidor corriendo en http://localhost:3000');
+});
+
+
+
+// Endpoint para obtener la última verificación
+app.get('/api/ultima-verificacion', async (req, res) => {
+  try {
+    const ultima = blockchainService.obtenerUltimaVerificacion();
+    res.json(ultima || { mensaje: 'No hay verificaciones todavía' });
+  } catch (error) {
+    res.status(500).json({ error: error.message });
+  }
+});
+
+// Endpoint para obtener todas las verificaciones
+app.get('/api/todas-verificaciones', async (req, res) => {
+  try {
+    const todas = blockchainService.obtenerTodasVerificaciones();
+    res.json(todas);
+  } catch (error) {
+    res.status(500).json({ error: error.message });
+  }
 });
